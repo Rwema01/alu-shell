@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# manage_my_process script
+
+start () {                                         
+    if [ -f /var/run/my_process.pid ]; then
+        echo "Process is already running."
+    else
+        ./manage_my_process &                          
+        echo $! > /var/run/my_process.pid              
+        echo "manage_my_process started"               
+    fi
+}                                                  
+                                                   
+stop () {                                          
+    if [ -f /var/run/my_process.pid ]; then
+        pkill -f "./manage_my_process"                 
+        rm /var/run/my_process.pid                     
+        echo "manage_my_process stopped"
+    else
+        echo "Process is not running."
+    fi
+}                                                  
+                                                   
+restart () {                                       
+    if [ -f /var/run/my_process.pid ]; then
+        pkill -f "./manage_my_process"                 
+        rm /var/run/my_process.pid
+    fi
+    ./manage_my_process &                          
+    echo $! > /var/run/my_process.pid             
+    echo "manage_my_process restarted"             
+}
+
+case "$1" in                                       
+   start) start ;;                                 
+   stop)  stop ;;                                   
+   restart) restart ;;                               
+   *) echo "Usage: manage_my_process {start|stop|restart}" ;;                                           
+esac
+
