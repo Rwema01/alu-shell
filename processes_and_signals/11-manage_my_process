@@ -10,9 +10,9 @@ case "$1" in
         fi
 
         # Start the manage_my_process script in the background
-        /path/to/manage_my_process & # Adjust the path accordingly
+        ./manage_my_process & # Adjust the path accordingly
         echo $! > /var/run/my_process.pid
-        echo "manage_my_process started"
+        echo "manage_my_process started with PID: $!"
         ;;
 
     stop)
@@ -33,7 +33,7 @@ case "$1" in
             echo "manage_my_process stopped"
         fi
 
-        /path/to/manage_my_process & # Adjust the path accordingly
+        ./manage_my_process & # Adjust the path accordingly
         echo $! > /var/run/my_process.pid
         echo "manage_my_process restarted"
         ;;
