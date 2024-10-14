@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# manage_my_process script
+
+PIDFILE="/var/run/my_process.pid"
+
+start () {
+    if [ -f "$PIDFILE" ]; then
+        echo "Process is already running (PID: $(cat $PIDFILE))."
+        exit 1
+    else
+        ./manage_my_process &  # Start process in the background
+        echo $! > "$PIDFILE"   # Save the process ID (PID) to a file
+        echo "manage_my_process started with PID $(cat $PIDFILE)."
+    fi
+}
+
+stop () {
+    if [ -f "$PIDFILE" ]; then
+        PID=$(cat "$PIDFILE")
+        if kill -0 $PID > /dev/null 2>&1; then
+            kill $PID
+            rm -f "$PIDFILE"  # Remove the PID file
+            echo "manage_my_process stopped."
+        else
+            echo "Process not found. Removing stale PID file."
+            rm -f "$PIDFILE"
+        fi
+    else
+        echo "Process is not running."
+        exit 1
+    fi
+}
+
+restart () {
+    stop
+    start
+}
+
+case "$1" in
+    start) start ;;
+    stop) stop ;;
+    restart) restart ;;
+    *) echo "Usage: manage_my_process {start|stop|restart}" ;;
+esac
+
